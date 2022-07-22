@@ -4,12 +4,14 @@ const User = require("../models/Users");
 const router = express.Router();
 const auth = require("../middleware/auth");
 router.post("/create_user", async (req, res) => {
-  console.log(req.body);
-  console.log(req.params);
+  console.log("inside user handler",req.body);
   const user = new User(req.body);
+  console.log(user);
   try {
     const token = await user.getAuthToken();
-    res.status(201).send({ ...user, token });
+    req.session.token = token;
+    res.status(201).send({ user, token });
+    
   } catch (err) {
     res.status(401).send(err);
   }
@@ -24,6 +26,7 @@ router.post("/login_user", async (req, res) => {
     );
     const token = await user.getAuthToken();
     res.status(200).send({ user, token });
+    console.log({ user, token });
   } catch (err) {
     res.status(400).send(err.message);
   }
