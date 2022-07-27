@@ -62,18 +62,74 @@ io.on("connection", (socket) => {
         console.log("connected users", connectedUsers);
     })
     socket.on("get-user-list", (msg, callback) => {
-             
-        if (connectedUsers.length <= 1) {
+           console.log("inside get-user-list", msg);   
+        if (connectedUsers.length < 1) {
         callback([]);
         }
         else {
             var users = connectedUsers.filter(user => user.id !== socket.id);
             callback(users);
         }
-         
-
     })
 
+
+    socket.on("sent-message", (data) => {
+        console.log(data);
+        console.log(socket.rooms);
+        io.in(data.roomid).emit("message-Received",data);
+       })
+
+    socket.on("call-made", (calledUsername, calledUserid, callingUserid) => {
+        console.log("inside callmade",calledUsername,calledUserid,callingUserid);
+        io.to(calledUserid).emit("allow-user", calledUsername, callingUserid);
+    })
+    socket.on("create-call", (callingUserid, calledUserid) => {
+        console.log("inside create-call",callingUserid, calledUserid );
+        var roomid = Math.random().toString()+callingUserid+calledUserid;
+        var callingUsername = connectedUsers.find(user => user.id === callingUserid).username;
+        var calledUsername = connectedUsers.find(user => user.id === calledUserid).username;
+        io.to(callingUserid).emit("Enter-call", roomid, calledUsername,calledUserid);
+        io.to(calledUserid).emit("Enter-call", roomid, callingUsername,callingUserid);
+   
+    })
+    socket.on("create-room", (rid) => {
+        socket.join(rid);  
+        console.log("joinin room", rid,socket.id);
+  })
+    socket.on("stop-call", (uid) => {
+        io.to(uid).emit("call-not-allowed");
+        // socket.on("")
+    });
+    socket.on("end-request", (id1, id2) => {
+        console.log("inside end-request",id1,id2);
+        io.to(id1).to(id2).emit("end-call");
+ 
+    })
+
+
+    ////RTC Event handlers
+
+    socket.on("offermade", (data) => {
+        console.log("offermade called", data);
+        io.to(data.to).emit("call-made", {
+            offer: data.offer,
+            socket:socket.id
+         })
+    })
+    socket.on("make-answer", (data) => {
+        console.log("make-answer called", data);
+        io.to(data.to).emit("answer-made", {
+            socket: socket.id,
+            answer:data.answer
+        })
+    })
+    socket.on("icecandidate-made", (data) => {
+        console.log("icecandidate-made",data);
+        io.to(data.to).emit("icecandidate-received", {
+            iceCandidate: data.iceCandidate,
+            socket:socket.id,
+        })
+    })
     socket.on("disconnecting", () => {
         connectedUsers = connectedUsers.filter(user => user.id !== socket.id);
         io.emit("update-user-List", connectedUsers);
