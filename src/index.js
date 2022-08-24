@@ -12,14 +12,17 @@ const app = express();
 const httpServer = createServer(app);
 app.use(cors());
 const io = socketIO(httpServer, {
-    path: "/socket.io",
     cors: {
-      origin: "*",
+      origin: "https://comwooauthsystem.herokuapp.com",
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
       credentials: true
           }
-  });
+});
+io.configure(function() {
+    io.set('transports', ['xhr-polling']);
+    io.set('polling duration', 10);
+  })
 // const io = new Server();
 const port = process.env.PORT || 8080;
 var connectedUsers = [];
