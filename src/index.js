@@ -13,12 +13,11 @@ const httpServer = createServer(app);
 app.use(cors());
 const io = socketIO(httpServer, {
     cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-      allowedHeaders: ["my-custom-header"],
+        origin: "*",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header", "Access-Control-Allow-Origin"],
         credentials: true,
-       
-       
+    }
 });
 io.configure(function() {
     io.set('transports', ['xhr-polling']);
