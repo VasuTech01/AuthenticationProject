@@ -11,7 +11,8 @@ const { createServer } = require("http");
 const app = express();
 const httpServer = createServer(app);
 app.use(cors());
-const io = socketIO(httpServer,{
+const io = socketIO(httpServer, {
+    path: "/socket.io",
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -141,5 +142,5 @@ app.listen(port, () => {
 
         console.log("Client connnected",port);
 })  
-io.listen(8081);
+// io.listen(8081);
 
