@@ -13,11 +13,12 @@ const httpServer = createServer(app);
 app.use(cors());
 const io = socketIO(httpServer, {
     cors: {
-      origin: "https://comwooauthsystem.herokuapp.com",
+      origin: "*",
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
-      credentials: true
-          }
+        credentials: true,
+       
+       
 });
 io.configure(function() {
     io.set('transports', ['xhr-polling']);
