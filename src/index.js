@@ -10,10 +10,15 @@ const userRouter = require("./routers/user");
 const { createServer } = require("http");
 const app = express();
 const httpServer = createServer(app);
-app.use(cors());
+app.use(cors({
+    origin: "https://comwooapp.herokuapp.com",
+    methods: ["GET", "POST"],
+   lowedHeaders: ["my-custom-header", "Access-Control-Allow-Origin"],
+    credentials: true,
+}));
 const io = socketIO(httpServer, {
     cors: {
-        origin: "*",
+        origin: "https://comwooapp.herokuapp.com",
         methods: ["GET", "POST"],
         allowedHeaders: ["my-custom-header", "Access-Control-Allow-Origin"],
         credentials: true,
