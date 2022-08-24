@@ -10,13 +10,14 @@ const userRouter = require("./routers/user");
 const { createServer } = require("http");
 const app = express();
 const httpServer = createServer(app);
+app.use(cors());
 const io = socketIO(httpServer,{
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
       credentials: true
-    }
+          }
   });
 // const io = new Server();
 const port = process.env.PORT || 8080;
@@ -24,7 +25,7 @@ var connectedUsers = [];
 console.log(process.env.PORT);
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
-app.use(cors());
+
 app.use(cookieSession({
     name: "Session",
     keys: ["India", "Haryana"],
@@ -49,11 +50,11 @@ io.on("connection", (socket) => {
     console.log("client connected", socket.id);
    
     console.log("connected users", connectedUsers);
-    socket.on("add-user-to-list", (msg) => {
-        if (connectedUsers.length === 0) {
+    socket.on("add-user-to-list", (msg,id) => {
+        console.log("adding user", msg);
+        if (!connectedUsers.length) {
             connectedUsers.push({ username: msg, id: socket.id });
-        } else {
-             
+        } else {  
             var user = connectedUsers.filter(user => user.id !== socket.id);
             user.push({ username: msg, id: socket.id });
             connectedUsers = user;
@@ -105,37 +106,35 @@ io.on("connection", (socket) => {
         io.to(id1).to(id2).emit("end-call");
  
     })
+    socket.on("disconnecting", () => {
+        console.log("disconnected user",socket.id);
+        const users = connectedUsers.filter(user => user.id !== socket.id);
+        connectedUsers = users;
+    })
 
 
     ////RTC Event handlers
-
-    socket.on("offermade", (data) => {
-        console.log("offermade called", data);
-        io.to(data.to).emit("call-made", {
-            offer: data.offer,
-            socket:socket.id
-         })
-    })
-    socket.on("make-answer", (data) => {
-        console.log("make-answer called", data);
-        io.to(data.to).emit("answer-made", {
-            socket: socket.id,
-            answer:data.answer
-        })
-    })
-    socket.on("icecandidate-made", (data) => {
-        console.log("icecandidate-made",data);
-        io.to(data.to).emit("icecandidate-received", {
-            iceCandidate: data.iceCandidate,
-            socket:socket.id,
-        })
-    })
-    socket.on("disconnecting", () => {
-        connectedUsers = connectedUsers.filter(user => user.id !== socket.id);
-        io.emit("update-user-List", connectedUsers);
-        console.log("client Disconnected",connectedUsers);
+    socket.on("Offer-made", (o) => {
+        console.log("offer made by", o.target);
+        io.to(o.target).emit("offer-received", { offer: o.offer, sender: socket.id });
     });
+    
+    socket.on("answer-made", (o) => {
+        console.log("answer offer made for", o.target);
+        io.to(o.target).emit("answer-received", { answer: o.answer, sender: socket.id });
+    })
+    socket.on("icecandidate-made", (o) => {
+        console.log("icecandidate sent", o);
+        io.to(o.target).emit("icecandidate-received", {
+            candidate: o.candidate,
+            sender:socket.id
+        })
+    })
+    
+
+    
 })
+
 
 
 app.listen(port, () => {
