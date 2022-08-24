@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const chalk= require("chalk");
 console.log(process.env.MongoUrl);
 var conFlag = false;
-var db = process.env.MongoUrl.toString();
+var db = process.env.MongoUrl;
 var clearIn = setInterval(function () { 
     mongoose.connect(db, {
         useNewUrlParser: true,
