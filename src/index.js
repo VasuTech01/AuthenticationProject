@@ -12,13 +12,17 @@ const app = express();
 const httpServer = createServer(app);
 app.use(cors());
 const io = socketIO(httpServer, {
-    cors: {
-        path:"/socket.io",
         origins: ["https://comwooapp.herokuapp.com"],
-        methods: ["GET", "POST"],
-        allowedHeaders: ["Access-Control-Allow-Origin"],
-        credentials: true,
-    }
+        handlePreflightRequest: (req, res) => {
+            res.writeHead(200, {
+              "Access-Control-Allow-Origin": "https://example.com",
+              "Access-Control-Allow-Methods": "GET,POST",
+              "Access-Control-Allow-Headers": "my-custom-header",
+              "Access-Control-Allow-Credentials": true
+            });
+            res.end();
+          }
+    
 });
 // io.configure(function() {
 //     io.set('transports', ['xhr-polling']);
