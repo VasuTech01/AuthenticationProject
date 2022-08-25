@@ -146,6 +146,6 @@ io.on("connection", (socket) => {
 app.listen(port, () => {
 
         console.log("Client connnected",port);
-})  
-// io.listen(8081);
+})
+io.listen(httpServer);
 
