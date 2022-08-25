@@ -13,17 +13,17 @@ const httpServer = createServer(app);
 app.use(cors());
 const io = socketIO(httpServer, {
     cors: {
-        origin: "https://comwooapp.herokuapp.com",
+        origins: ["https://comwooapp.herokuapp.com"],
         methods: ["GET", "POST"],
         allowedHeaders: ["Access-Control-Allow-Origin"],
         credentials: true,
     }
 });
-io.configure(function() {
-    io.set('transports', ['xhr-polling']);
-    io.set('polling duration', 10);
-    io.set("Access-Control-Allow-Origin", "https://comwooapp.herokuapp.com");
-  })
+// io.configure(function() {
+//     io.set('transports', ['xhr-polling']);
+//     io.set('polling duration', 10);
+//     io.set("Access-Control-Allow-Origin", "https://comwooapp.herokuapp.com");
+//   })
 // const io = new Server();
 const port = process.env.PORT || 8080;
 var connectedUsers = [];
