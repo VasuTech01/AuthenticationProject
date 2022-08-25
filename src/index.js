@@ -13,6 +13,7 @@ const httpServer = createServer(app);
 app.use(cors());
 const io = socketIO(httpServer, {
     cors: {
+        path:"/socket.io",
         origins: ["https://comwooapp.herokuapp.com"],
         methods: ["GET", "POST"],
         allowedHeaders: ["Access-Control-Allow-Origin"],
