@@ -22,6 +22,7 @@ const io = socketIO(httpServer, {
 io.configure(function() {
     io.set('transports', ['xhr-polling']);
     io.set('polling duration', 10);
+    io.set("Access-Control-Allow-Origin", "https://comwooapp.herokuapp.com");
   })
 // const io = new Server();
 const port = process.env.PORT || 8080;
