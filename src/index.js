@@ -151,5 +151,5 @@ app.listen(port, () => {
 
         console.log("Client connnected",port);
 })
-io.listen(httpServer);
+io.listen(app);
 
