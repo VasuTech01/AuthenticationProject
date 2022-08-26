@@ -12,16 +12,20 @@ const app = express();
 const httpServer = createServer(app);
 app.use(cors());
 const io = socketIO(httpServer, {
-        origins: ["https://comwooapp.herokuapp.com"],
-        handlePreflightRequest: (req, res) => {
-            res.writeHead(200, {
-              "Access-Control-Allow-Origin": "https://comwooapp.herokuapp.com",
-              "Access-Control-Allow-Methods": "GET,POST",
-              "Access-Control-Allow-Headers": "my-custom-header",
-              "Access-Control-Allow-Credentials": true
-            });
-            res.end();
-          }
+    cors: {
+        origin: "https://comwooapp.herokuapp.com",
+        methods: ["GET", "POST"]
+      }
+   
+        // handlePreflightRequest: (req, res) => {
+        //     res.writeHead(200, {
+        //       "Access-Control-Allow-Origin": "https://comwooapp.herokuapp.com",
+        //       "Access-Control-Allow-Methods": "GET,POST",
+        //       "Access-Control-Allow-Headers": "my-custom-header",
+        //       "Access-Control-Allow-Credentials": true
+        //     });
+        //     res.end();
+        //   }
     
 });
 // io.configure(function() {
