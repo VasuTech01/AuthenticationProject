@@ -14,25 +14,17 @@ app.use(cors());
 const io = socketIO(httpServer, {
     cors: {
         origin: "https://comwooapp.herokuapp.com",
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header","Access-Control-Allow-Origin"],
+        credentials: true
       }
-   
-        // handlePreflightRequest: (req, res) => {
-        //     res.writeHead(200, {
-        //       "Access-Control-Allow-Origin": "https://comwooapp.herokuapp.com",
-        //       "Access-Control-Allow-Methods": "GET,POST",
-        //       "Access-Control-Allow-Headers": "my-custom-header",
-        //       "Access-Control-Allow-Credentials": true
-        //     });
-        //     res.end();
-        //   }
     
 });
-io.configure(function() {
-    io.set('transports', ['xhr-polling']);
-    io.set('polling duration', 10);
-    io.set("Access-Control-Allow-Origin", "https://comwooapp.herokuapp.com");
-  })
+// io.configure(function() {
+//     io.set('transports', ['xhr-polling']);
+//     io.set('polling duration', 10);
+//     io.set("Access-Control-Allow-Origin", "");
+//   })
 // const io = new Server();
 const port = process.env.PORT || 8080;
 var connectedUsers = [];
