@@ -143,9 +143,6 @@ io.on("connection", (socket) => {
 
 
 
-app.listen(port, () => {
-
-        console.log("Client connnected",port);
-})
-io.listen(app);
+httpServer.listen(port);
+//io.listen(app);
 
